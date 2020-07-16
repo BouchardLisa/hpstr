@@ -73,7 +73,8 @@ private:
         TBranch *bParts_{nullptr};
         TBranch *bsvtHits_{nullptr};
         TBranch *brhth_{nullptr};
- //       TBranch *bTrackerHits_{nullptr};
+        TBranch *bTrackerHits_{nullptr};
+
 
 
         EventHeader *evtHead_{nullptr};
@@ -81,7 +82,8 @@ private:
 
         std::vector<Particle*> *fsParts_{nullptr};
         std::vector<RawSvtHit*> *svtHits_{nullptr};
-        std::vector<Track*> *rhth_{nullptr};
+        std::vector<TrackerHit*> *rhth_{nullptr};
+        std::vector<TrackerHit*> *tracker_hit_{nullptr};
 
         TH1I *h1 {nullptr};
         TH1I *h2 {nullptr};

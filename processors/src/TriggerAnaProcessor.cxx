@@ -68,6 +68,7 @@ void TriggerAnaProcessor::initialize(TTree *tree) {
     tree_->SetBranchAddress("SVTRawTrackerHits", &svtHits_, &bsvtHits_);
     tree_->SetBranchAddress("FinalStateParticles", &fsParts_, &bParts_);
     tree->SetBranchAddress("RotatedHelicalTrackHits", &rhth_, &brhth_);
+    tree->SetBranchAddress("")
 
 }
 
@@ -222,13 +223,14 @@ void TriggerAnaProcessor::AllNeutrals(double EnergyThresh, int max_layer) {
 
     for (int k = 0; k < rhth_->size(); k++) {
         //RotatedHelicalTrackHit is type track and not track hit????
-        Track *t1 = (*rhth_)[k];
-        TRefArray *rawhits_ = t1->getSvtHits();
-        for (int l = 0; l < rawhits_->GetSize(); l++) {
+        TrackerHit *t1 = (*rhth_)[k];
+        //TRefArray *rawhits_ = t1->getSvtHits();
+        /*for (int l = 0; l < rawhits_->GetSize(); l++) {
             // so I don't know how to take an element of a TRefArray and have the code recognize what data type it is.
-            RawSvtHit this_hit = rawhits_[l];
-            int this_rawlayer = rawhits_[l].getLayer(); //there is definitely a getLayer for RawSvtHit
-            rawlayer->Fill(
+            RawSvtHit this_hit = rawhits_[l];*/
+            int this_rawlayer = t1->getLayer(); //there is definitely a getLayer for RawSvtHit
+            rawlayer->Fill(this_rawlayer)
+        //check if every t1 has a track associated with it? 
 
         }
 
