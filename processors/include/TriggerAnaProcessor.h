@@ -55,7 +55,9 @@ class TriggerAnaProcessor : public Processor {
 
         virtual void SaveHistos(int option);
 
-       // virtual void NoTracks(double EnergyThresh_in_GeV);
+        virtual void FindNoTracks(double energy_threshold);
+
+
 
 
 
@@ -74,16 +76,16 @@ private:
         TBranch *bsvtHits_{nullptr};
         TBranch *brhth_{nullptr};
         TBranch *bTrackerHits_{nullptr};
-
-
+        TBranch *brhonth_{nullptr};
 
         EventHeader *evtHead_{nullptr};
         TSData *trigger_{nullptr};
-
         std::vector<Particle*> *fsParts_{nullptr};
         std::vector<RawSvtHit*> *svtHits_{nullptr};
         std::vector<TrackerHit*> *rhth_{nullptr};
         std::vector<TrackerHit*> *tracker_hit_{nullptr};
+        std::vector<TrackerHit*> *rhonth_{nullptr};
+        std::vector<int> *notracks_{nullptr};
 
         TH1I *h1 {nullptr};
         TH1I *h2 {nullptr};
@@ -104,6 +106,10 @@ private:
         TH1I *trackHit {nullptr};
         TH1I *noHits {nullptr};
         TH1I *rawhitenergy {nullptr};
+        TH1I *noTracks{nullptr};
+        TH1I *rawlayer{nullptr};
+        TH1I *rawtrackid{nullptr};
+        TH1I *on_track_layer{nullptr};
 
 
         int SaveOption;
