@@ -10,7 +10,7 @@
 #include <string>
 
 TriggerAnaProcessor::TriggerAnaProcessor(const std::string &name, Process &process) : Processor(name, process) {
-   /* h1 = new TH1I("AllDatabyTrigger", "All Data by Trigger", 20, 0, 20);
+    h1 = new TH1I("AllDatabyTrigger", "All Data by Trigger", 20, 0, 20);
     h2 = new TH1I("AllNeutralsByTrigger", "All Neutrals in Triggers", 20, 0, 20);
     h3 = new TH1I("TwoPlusNeutrals", "2 or More Neutrals", 20, 0, 20);
     h4 = new TH1I("AllData", "All Data > 100 MeV", 20, 0, 20);
@@ -33,12 +33,12 @@ TriggerAnaProcessor::TriggerAnaProcessor(const std::string &name, Process &proce
     rawlayer = new TH1I{"rawlayer", "Raw Hit Layers of RHTH",0, 15, 0};
     rawtrackid = new TH1I{"rawtrackid", "Raw Track ID", 0, 1000, 0}; // no idea on appropriate bins here
     on_track_layer = new TH1I{"ontrackrawlayer", "On Track Raw Hit Layers of RHTH", 0, 1000, 0};
-*/
+
     }
 
 //TODO CHECK THIS DESTRUCTOR
 TriggerAnaProcessor::~TriggerAnaProcessor() {
-  /*  delete h1;
+    delete h1;
     delete h2;
     delete h3;
     delete h4;
@@ -58,17 +58,17 @@ TriggerAnaProcessor::~TriggerAnaProcessor() {
     delete rawhitenergy;
     delete noTracks;
     delete trackHit;
-*/
+
 }
 
 void TriggerAnaProcessor::configure(const ParameterSet &parameters) {
-  //  std::cout << "Configuring TriggerAnaProcessor" << std::endl;
-   // debug_ = 0;
+    std::cout << "Configuring TriggerAnaProcessor" << std::endl;
+    debug_ = 0;
 }
 
 void TriggerAnaProcessor::initialize(TTree *tree) {
     std::cout << "Initializing TriggerAnaProcessor" << std::endl;
-   /* tree_ = tree;
+    tree_ = tree;
     tree_->SetBranchAddress("EventHeader", &evtHead_, &bHeader_);
     tree_->SetBranchAddress("FinalStateParticles", &fsParts_, &bCharge_);
     tree_->SetBranchAddress("TSBank", &trigger_, &bTrigger_);
@@ -76,8 +76,6 @@ void TriggerAnaProcessor::initialize(TTree *tree) {
     tree_->SetBranchAddress("FinalStateParticles", &fsParts_, &bParts_);
     tree_->SetBranchAddress("RotatedHelicalTrackHits", &rhth_, &brhth_);
     tree_->SetBranchAddress("RotatedHelicalOnTrackHits", &rhonth_, &brhonth_);
-*/
-
 }
 
 bool TriggerAnaProcessor::process(IEvent *ievent) {
@@ -91,7 +89,7 @@ bool TriggerAnaProcessor::process(IEvent *ievent) {
     return true;
 }
 
-/*void TriggerAnaProcessor::FillTrigHistos(TH1I *h){
+void TriggerAnaProcessor::FillTrigHistos(TH1I *h){
     //this should fill all triggers in 1 histo
     if (trigger_->prescaled.Single_0_Top) { h->Fill(0); }
     if (trigger_->prescaled.Single_0_Top) { h->Fill(0); }
@@ -337,9 +335,9 @@ void TriggerAnaProcessor::SaveHistos(int option) {
         rawlayer->Write();
     }
 }
- */
+
 void TriggerAnaProcessor::finalize() {
-    //SaveHistos(SaveOption);
+    SaveHistos(SaveOption);
 }
 
 DECLARE_PROCESSOR(TriggerAnaProcessor);
