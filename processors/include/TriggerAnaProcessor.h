@@ -3,7 +3,6 @@
 //Lisa Bouchard
 //6/20/2020
 
-
 #ifndef __TRIGGER_ANAPROCESSOR_H__
 #define __TRIGGER_ANAPROCESSOR_H__
 
@@ -27,7 +26,6 @@
 #include "TFile.h"
 
 class TTree;
-
 
 class TriggerAnaProcessor : public Processor {
 
@@ -57,15 +55,7 @@ class TriggerAnaProcessor : public Processor {
 
         virtual void FindNoTracks(double energy_threshold);
 
-
-
-
-
-
-
 private:
-
-
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
 
@@ -77,6 +67,7 @@ private:
         TBranch *brhth_{nullptr};
         TBranch *bTrackerHits_{nullptr};
         TBranch *brhonth_{nullptr};
+        TBranch *bTrack_{nullptr};
 
         EventHeader *evtHead_{nullptr};
         TSData *trigger_{nullptr};
@@ -86,6 +77,7 @@ private:
         std::vector<TrackerHit*> *tracker_hit_{nullptr};
         std::vector<TrackerHit*> *rhonth_{nullptr};
         std::vector<int> *notracks_{nullptr};
+        std::vector<Track*> *tracks_{nullptr};
 
         TH1I *h1 {nullptr};
         TH1I *h2 {nullptr};
@@ -110,6 +102,10 @@ private:
         TH1I *rawlayer{nullptr};
         TH1I *rawtrackid{nullptr};
         TH1I *on_track_layer{nullptr};
+        TH1I *mass{nullptr};
+        TH1I *mass2{nullptr};
+        TH1I *mom1_histo{nullptr};
+        TH1I *mom0_histo{nullptr};
 
 
         int SaveOption;

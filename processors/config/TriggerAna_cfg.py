@@ -11,6 +11,7 @@ import sys
 import baseConfig
 
 parser = baseConfig.parser
+# used to be (args, options) =, or something close to that.
 options = parser.parse_args()
 # Use the input file to set the output file name
 
@@ -40,7 +41,7 @@ ts  = HpstrConf.Processor('trg', 'TriggerAnaProcessor')
 # Sequence which the processors will run.
 
 p.sequence = [ts]
-
+#took out square brackets around input_file
 p.input_files=input_file
 p.output_files = [output_file]
 
