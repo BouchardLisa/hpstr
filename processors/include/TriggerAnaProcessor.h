@@ -106,6 +106,8 @@ private:
         TH1I *mass2{nullptr};
         TH1I *mom1_histo{nullptr};
         TH1I *mom0_histo{nullptr};
+        TH1I *energy1_histo{nullptr};
+        TH1I *energy2_histo{nullptr};
 
 
         int SaveOption;

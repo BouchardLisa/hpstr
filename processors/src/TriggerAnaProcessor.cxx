@@ -34,12 +34,13 @@ TriggerAnaProcessor::TriggerAnaProcessor(const std::string &name, Process &proce
     rawlayer = new TH1I{"rawlayer", "Raw Hit Layers of RHTH",0, 15, 0};
     rawtrackid = new TH1I{"rawtrackid", "Raw Track ID", 0, 1000, 0}; // no idea on appropriate bins here
     on_track_layer = new TH1I{"ontrackrawlayer", "On Track Raw Hit Layers of RHTH", 0, 100, 0};
-    mass = new TH1I{"invar_mass", "M^2 = E^2 - p^2", 0, 100, 0};
-    mass2 = new TH1I{"invar_mass2", "M^2 = p1*p2*(1-cos(theta))", 0, 1000, 0};
-    mom1_histo = new TH1I{"momentum1", "Momentum of second particle in pair", 0, 10, 0};
-    mom0_histo = new TH1I{"momentum0", "Momentum of first particle in pair", 0, 10, 0};
-
-};
+    mass = new TH1I{"invar_mass", "Invar Mass 2500 bins, x from 0 to 2.5", 2500, 0, 2.5};
+    mass2 = new TH1I{"energy_momentum", "Cluster Energy minus momentum", 5, 1, 10};
+    mom1_histo = new TH1I{"momentum1", "Momentum of second particle in pair", 5, 0, 10};
+    mom0_histo = new TH1I{"momentum0", "Momentum of first particle in pair", 5, 0, 10};
+    energy1_histo = new TH1I{"particle_1_energy", "Energy of particle 1", 5, 0, 10};
+    energy2_histo = new TH1I{"particle_2_energy", "Energy of particle 2", 5, 0, 10};
+}
 
 //TODO CHECK THIS DESTRUCTOR
 TriggerAnaProcessor::~TriggerAnaProcessor() {
@@ -65,6 +66,8 @@ TriggerAnaProcessor::~TriggerAnaProcessor() {
     delete trackHit;
     delete mass;
     delete mass2;
+    delete energy1_histo;
+    delete energy2_histo;
 
 }
 
@@ -92,10 +95,11 @@ bool TriggerAnaProcessor::process(IEvent *ievent) {
     //FindNeutrals("prescaled.Single_2_Bot", 1, 0.1);
     //FindNeutrals("prescaled.Single_2_Bot", 2, 0.1);
 
-    AllNeutrals(0.1, 5);
+    AllNeutrals(0.0, 15);  //(0.0, 15) gives all data
  //  FindNoTracks(0.01);
 
     return true;
+
 }
 
 void TriggerAnaProcessor::FillTrigHistos(TH1I *h){
@@ -204,25 +208,9 @@ void TriggerAnaProcessor::AllNeutrals(double EnergyThresh, int max_layer) {
             energy->Fill(p1->getEnergy());
         }
     }
-    /*
-     *
-     *
-     * below is an attempt to find the invariant mass:
-     *
-     *
-     */
-
-
-    //find RawSvtHits - Track.getSVTHits() to find all RawSVTHits that aren't on a track
-            //vector of all svt hits
-            //vector of all svt hits on tracks
-            //sort the two vectors
-            //take the difference of all - track
-    //find the particles created from above step - seems like it ought to be simple, but it isn't
-    //find all particles with > 2 per event whose charge is 0 and whose energy is greater than threshold - done
 
     //analyze the particles that are in both sets as neutrals
-    /*std::vector<TObject> all_svthits_;
+    std::vector<TObject> all_svthits_;
     std::vector<TObject> track_hits_;
     for (int i = 0; i < svtHits_->size(); i++) {
         TObject *t1 = (*svtHits_)[i];
@@ -237,22 +225,7 @@ void TriggerAnaProcessor::AllNeutrals(double EnergyThresh, int max_layer) {
             track_hits_.push_back(*add_hit);
         }
     }
-    std::sort(all_svthits_.begin(), all_svthits_.end());
-    std::sort(track_hits_.begin(), track_hits_.end());
 
-    std::vector<int> difference;
-    std::set_difference(
-            all_svthits_.begin(), all_svthits_.end(),
-            track_hits_.begin(), track_hits_.end(),
-            std::back_inserter( difference )
-            );
-
-    //but now how to take these svt hits and find the particles they are used to create?
-
-
-
-    }
-     */
     //only finding invariant mass when there are exactly two neutrals
     int iter = 0;
     for (int i = 0; i < fsParts_->size(); i++) {
@@ -260,30 +233,33 @@ void TriggerAnaProcessor::AllNeutrals(double EnergyThresh, int max_layer) {
         if (p1->getCharge() == 0 && p1->getEnergy() > EnergyThresh) {
             ++iter;
              if (iter == 2) {
-                      //calc invariant mass m^2 = E^2 -p^2
-                      // but which E and p do I use?
-                      Particle *p0 = (*fsParts_)[i-1];
-                      std::vector<double> mom0 = p0->getMomentum();
-                      double totalmom0 = sqrt(p0->getMomentum()[0]*p0->getMomentum()[0] + p0->getMomentum()[1]*p0->getMomentum()[1]+ p0->getMomentum()[2]*p0->getMomentum()[2]);
-                      mom0_histo->Fill(totalmom0);
-                      std::vector<double> mom1 = p1->getMomentum();
-                   //   std::cout << "momentum is " << p1->getMomentum()[0] << ", " << p1->getMomentum()[1] << ", " << p1->getMomentum()[2] << std::endl;
-                      double totalmom1 = sqrt(p1->getMomentum()[0]*p1->getMomentum()[0] + p1->getMomentum()[1]*p1->getMomentum()[1]+ p1->getMomentum()[2]*p1->getMomentum()[2]);
-                      mom1_histo->Fill(totalmom1);
-                      auto mom_x_0 = p0->getMomentum()[0];
-                      auto mom_x_1 = p1->getMomentum()[0];
-                      auto energy0 = p0->getEnergy();
-                      auto energy1 = p1->getEnergy();
-                      //not entirely sure this is the right equation for mass, but we'll give it a shot
-                      double mass_ = sqrt(energy1*energy1 - totalmom1*totalmom1);
-                      mass->Fill(mass_);
-                      //angle between the two particles - in which direction? I will use x for now.
-                      //can I assume it's a very small angle and use law of cosines?
-                      //c^2 = a^2 + b^2 -2abcos(theta) where c is the line of the triangle that is not p1 or p2
-                      //if I assume c is approximately 0, I can solve for cos(theta)
-                      double cos_theta = (mom_x_0*mom_x_0 + mom_x_1*mom_x_1)/(2*mom_x_0*mom_x_1);
-                      double mass2_ = totalmom0*totalmom1*(1-cos_theta);
-                      mass2->Fill(mass2_);
+                 Particle *p0 = (*fsParts_)[i - 1];
+
+                 CalCluster cluster1_ = p1->getCluster();
+                 CalCluster cluster0_ = p0->getCluster();
+
+                 auto Energy1_ = cluster1_.getEnergy();
+                 auto Energy0_ = cluster0_.getEnergy();
+                 energy1_histo->Fill(Energy0_);
+                 energy2_histo->Fill(Energy1_);
+
+                 auto p1x = p1->getMomentum()[0];
+                 auto p1y = p1->getMomentum()[1];
+                 auto p1z = p1->getMomentum()[2];
+                 auto TotalMom1 = sqrt(p1x * p1x + p1y * p1y + p1z * p1z);
+                 mom1_histo->Fill(TotalMom1);
+
+                 auto p0x = p0->getMomentum()[0];
+                 auto p0y = p0->getMomentum()[1];
+                 auto p0z = p0->getMomentum()[2];
+                 auto TotalMom0 = sqrt(p0x * p0x + p0y * p0y + p0z * p0z);
+                 mom0_histo->Fill(TotalMom0);
+                 auto mom_12 = p1x * p1y * p1z + p0x * p0y * p0z;
+                 auto cos_theta = mom_12/(TotalMom1*TotalMom0);
+                 auto mass_ = 2*mom_12 *(1.0-cos_theta);
+                 mass->Fill(mass_);
+                 //confirm Energy is the same as the momentum
+                 mass2->Fill(Energy1_ - TotalMom1);
              }
         }
         if (iter > 1) { FillTrigHistos(h6); }
@@ -296,17 +272,6 @@ void TriggerAnaProcessor::AllNeutrals(double EnergyThresh, int max_layer) {
         int this_layer = p2->getLayer();
         if (this_layer <= max_layer) { layers->Fill(this_layer); }
     }
-
-    //get list of raw hits from RotatedHelicalTrackHits, then check which layer each raw hit is at and plot
-    //global Z or other things
-
-    //plot other things available in code right now
-    //sides->Fill(p2->getSide());
-    //sys->Fill(p2->getSystem());
-    //barrel->Fill(p2->getBarrel());
-    //modu->Fill(p2->getModule());
-    //sensor->Fill(p2->getSensor());
-    //strip->Fill(p2->getStrip());
 }
 
 void TriggerAnaProcessor::FindNoTracks(double EnergyThresh) {
@@ -430,6 +395,8 @@ void TriggerAnaProcessor::SaveHistos(int option) {
         mass2->Write();
         mom1_histo->Write();
         mom0_histo->Write();
+        energy2_histo->Write();
+        energy1_histo->Write();
        // sides->Write();
      //   ADC->Write();
      //   sys->Write();
