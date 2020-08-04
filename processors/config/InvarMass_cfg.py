@@ -32,6 +32,7 @@ p.add_library("libprocessors")
 ###############################
 #          Processors         #
 ###############################
+
 invm  = HpstrConf.Processor('invm', 'InvarMassAnaProcessor')
 
 ###############################

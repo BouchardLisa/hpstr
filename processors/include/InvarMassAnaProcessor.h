@@ -6,8 +6,8 @@
  *
 */
 
-#ifndef HPSTR_INVARMASSANAPROCESSOR_H
-#define HPSTR_INVARMASSANAPROCESSOR_H
+#ifndef __INVARMASS_ANAPROCESSOR_H__
+#define __INVARMASS_ANAPROCESSOR_H__
 
 //HPSTR
 #include <TH1I.h>
@@ -67,26 +67,17 @@ private:
 
     TH1I *AllEnergy {nullptr};
     TH1I *EnergyThreshold {nullptr};
-    TH1I *neutrals {nullptr};
+    TH1I *Neutrals {nullptr};
     TH1I *energy {nullptr};
-    TH1I *layers {nullptr};
-    TH1I *mass{nullptr};
-    TH1I *mom1_histo{nullptr};
-    TH1I *mom0_histo{nullptr};
-    TH1I *energy1_histo{nullptr};
-    TH1I *energy0_histo{nullptr};
-    TH1I *total_energy_histo{nullptr};
-    TH1I *AllNeutralsHisto{nullptr};
-    TH1I *mass_layer{nullptr};
+    TH1I *InvarMass{nullptr};
+    TH1I *TotalEBothNeutrals{nullptr};
+    TH1I *MassLayer{nullptr};
     TH1I *SeparateY{nullptr};
-    TH1I *NeutralsByPair{nullptr};
-
-
-    int SaveOption;
+    TH1I *TimeCut{nullptr};
 
     //Debug Level
     int debug_{0};
 
 };
 
-#endif //HPSTR_INVARMASSANAPROCESSOR_H
+#endif //__INVARMASS_ANAPROCESSOR_H__
